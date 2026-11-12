@@ -4,11 +4,19 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import db
 from .config import settings
-from .routers import chat, dashboard, files, investigate, memory, reports
+from .routers import chat, codebase, dashboard, documents, files, investigate, memory, projects, reports
 
-app = FastAPI(title="DataPilot AI", version="0.1.0")
-app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins.split(","),
-                   allow_methods=["*"], allow_headers=["*"])
+app = FastAPI(title="DataPilot AI", version="0.2.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins.split(","),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(projects.router)
+app.include_router(documents.router)
+app.include_router(codebase.router)
 app.include_router(files.router)
 app.include_router(chat.router)
 app.include_router(investigate.router)
@@ -19,7 +27,13 @@ app.include_router(dashboard.router)
 
 @app.get("/api/health")
 async def health():
-    status = {"api": "ok", "mongo": "down", "ollama": "down", "model": settings.ollama_model, "model_ready": False}
+    status = {
+        "api": "ok",
+        "mongo": "down",
+        "ollama": "down",
+        "model": settings.ollama_model,
+        "model_ready": False,
+    }
     try:
         await db.client.admin.command("ping")
         status["mongo"] = "ok"
