@@ -1,0 +1,8 @@
+# Optional: run MongoDB without installing it. Backend, frontend and Ollama run on the host.
+services:
+  mongo:
+    image: mongo:7
+    ports: ["27017:27017"]
+    volumes: ["mongo_data:/data/db"]
+volumes:
+  mongo_data:

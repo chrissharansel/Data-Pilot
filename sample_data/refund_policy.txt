@@ -1,0 +1,8 @@
+Refund and Approval Policy (v3)
+
+1. Refunds up to 500 dollars may be approved by any support agent.
+2. Refunds above 500 dollars require manager approval within 5 business days.
+3. Any single order above 5,000 dollars must be reviewed by the finance team before fulfilment,
+   and the review outcome must be recorded in the order notes.
+4. Duplicate orders must be cancelled within 48 hours of detection and the customer notified.
+5. Customer contact details may only be shared with the finance and compliance teams.
