@@ -6,10 +6,13 @@ import FileProfile from "./components/FileProfile.jsx";
 import StatusBar from "./components/StatusBar.jsx";
 import ReportView from "./components/ReportView.jsx";
 import Dashboard from "./components/Dashboard.jsx";
+import ProjectSwitcher from "./components/ProjectSwitcher.jsx";
+import DocumentsPanel from "./components/DocumentsPanel.jsx";
+import CodebasePanel from "./components/CodebasePanel.jsx";
 
 export default function App() {
   const [files, setFiles] = useState([]);
-  const [scope, setScope] = useState([]);          // file ids the questions are limited to ([] = all)
+  const [scope, setScope] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [sessionId, setSessionId] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -18,13 +21,22 @@ export default function App() {
   const [reportId, setReportId] = useState(null);
   const [view, setView] = useState("investigate");
   const [navOpen, setNavOpen] = useState(false);
+  const [projectId, setProjectId] = useState(() => localStorage.getItem("datapilot_project") || null);
 
   const refreshFiles = useCallback(() => api.listFiles().then(setFiles).catch(() => {}), []);
   const refreshSessions = useCallback(() => api.sessions().then(setSessions).catch(() => {}), []);
-
   const refreshReports = useCallback(() => api.listReports().then(setReports).catch(() => {}), []);
 
-  useEffect(() => { refreshFiles(); refreshSessions(); refreshReports(); }, [refreshFiles, refreshSessions, refreshReports]);
+  useEffect(() => {
+    refreshFiles();
+    refreshSessions();
+    refreshReports();
+  }, [refreshFiles, refreshSessions, refreshReports]);
+
+  useEffect(() => {
+    if (projectId) localStorage.setItem("datapilot_project", projectId);
+    else localStorage.removeItem("datapilot_project");
+  }, [projectId]);
 
   const openSession = async (id) => {
     setSessionId(id);
@@ -32,9 +44,14 @@ export default function App() {
     setView("investigate");
     setNavOpen(false);
   };
-  const newSession = () => { setSessionId(null); setMessages([]); setNavOpen(false); };
+  const newSession = () => {
+    setSessionId(null);
+    setMessages([]);
+    setNavOpen(false);
+  };
 
-  const toggleScope = (id) => setScope((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+  const toggleScope = (id) =>
+    setScope((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
   const removeFile = async (id) => {
     await api.deleteFile(id);
     setScope((s) => s.filter((x) => x !== id));
@@ -45,28 +62,72 @@ export default function App() {
   return (
     <div className="shell">
       <Sidebar
-        open={navOpen} reports={reports} onOpenReport={setReportId} files={files} scope={scope} sessions={sessions} sessionId={sessionId}
-        onToggleScope={toggleScope} onUploaded={refreshFiles} onDelete={removeFile}
-        onProfile={setProfileId} onOpenSession={openSession} onNew={newSession}
+        open={navOpen}
+        reports={reports}
+        onOpenReport={setReportId}
+        files={files}
+        scope={scope}
+        sessions={sessions}
+        sessionId={sessionId}
+        onToggleScope={toggleScope}
+        onUploaded={refreshFiles}
+        onDelete={removeFile}
+        onProfile={setProfileId}
+        onOpenSession={openSession}
+        onNew={newSession}
       />
       <main className="main">
         <header className="topbar">
-          <button className="menu" onClick={() => setNavOpen((v) => !v)} aria-label="Toggle navigation">☰</button>
+          <button className="menu" onClick={() => setNavOpen((v) => !v)} aria-label="Toggle navigation">
+            ☰
+          </button>
+          <ProjectSwitcher projectId={projectId} onSelect={setProjectId} />
           <nav className="nav" aria-label="Views">
-            <button className={view === "investigate" ? "active" : ""} onClick={() => setView("investigate")}>Investigate</button>
-            <button className={view === "dashboard" ? "active" : ""} onClick={() => setView("dashboard")}>Dashboard</button>
+            <button className={view === "investigate" ? "active" : ""} onClick={() => setView("investigate")}>
+              Investigate
+            </button>
+            <button className={view === "documents" ? "active" : ""} onClick={() => setView("documents")}>
+              Documents
+            </button>
+            <button className={view === "codebase" ? "active" : ""} onClick={() => setView("codebase")}>
+              Codebase
+            </button>
+            <button className={view === "dashboard" ? "active" : ""} onClick={() => setView("dashboard")}>
+              Dashboard
+            </button>
           </nav>
           <StatusBar />
         </header>
-        {view === "dashboard" ? <Dashboard onOpenSession={openSession} /> : (
+
+        {view === "dashboard" && <Dashboard onOpenSession={openSession} />}
+        {view === "documents" && <DocumentsPanel projectId={projectId} />}
+        {view === "codebase" && <CodebasePanel projectId={projectId} />}
+        {view === "investigate" && (
           <Chat
-          files={files} scope={scope} sessionId={sessionId} messages={messages}
-          setMessages={setMessages} setSessionId={setSessionId} onSent={refreshSessions}
-          onReport={(id) => { refreshReports(); setReportId(id); }}
-        />
+            files={files}
+            scope={scope}
+            sessionId={sessionId}
+            messages={messages}
+            setMessages={setMessages}
+            setSessionId={setSessionId}
+            onSent={refreshSessions}
+            onReport={(id) => {
+              refreshReports();
+              setReportId(id);
+            }}
+          />
         )}
       </main>
-      {reportId && <ReportView id={reportId} onClose={() => setReportId(null)} onDeleted={() => { setReportId(null); refreshReports(); }} />}
+      {reportId && (
+        <ReportView
+          id={reportId}
+          onClose={() => setReportId(null)}
+          onDeleted={() => {
+            setReportId(null);
+            refreshReports();
+          }}
+        />
+      )}
       {profileId && <FileProfile id={profileId} onClose={() => setProfileId(null)} />}
     </div>
   );
