@@ -9,7 +9,6 @@ async function request(path, options) {
   return res.json();
 }
 
-// POST + Server-Sent Events: calls onEvent(name, data) for each event as it arrives.
 async function stream(path, body, onEvent) {
   const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   if (!res.ok || !res.body) {
@@ -37,6 +36,50 @@ async function stream(path, body, onEvent) {
 
 export const api = {
   health: () => request("/api/health"),
+
+  listProjects: () => request("/api/projects"),
+  createProject: (body) =>
+    request("/api/projects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
+  getProject: (id) => request(`/api/projects/${id}`),
+  updateProject: (id, body) =>
+    request(`/api/projects/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
+  deleteProject: (id) => request(`/api/projects/${id}`, { method: "DELETE" }),
+
+  listDocuments: (projectId) => request(`/api/projects/${projectId}/documents`),
+  createDocument: (projectId, body) =>
+    request(`/api/projects/${projectId}/documents`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
+  generateDocument: (projectId, body) =>
+    request(`/api/projects/${projectId}/documents/generate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
+  getDocument: (projectId, docId) => request(`/api/projects/${projectId}/documents/${docId}`),
+  updateDocument: (projectId, docId, body) =>
+    request(`/api/projects/${projectId}/documents/${docId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
+  deleteDocument: (projectId, docId) => request(`/api/projects/${projectId}/documents/${docId}`, { method: "DELETE" }),
+
+  codeTree: (projectId, path = "") => request(`/api/projects/${projectId}/code/tree?path=${encodeURIComponent(path)}`),
+  codeFile: (projectId, path, ref) => {
+    const q = new URLSearchParams({ path });
+    if (ref) q.set("ref", ref);
+    return request(`/api/projects/${projectId}/code/file?${q}`);
+  },
+  codeUpload: (projectId, fileList, paths) => {
+    const form = new FormData();
+    [...fileList].forEach((f) => form.append("files", f));
+    if (paths) paths.forEach((p) => form.append("paths", p));
+    return request(`/api/projects/${projectId}/code/upload`, { method: "POST", body: form });
+  },
+  listBranches: (projectId) => request(`/api/projects/${projectId}/code/branches`),
+  createBranch: (projectId, body) =>
+    request(`/api/projects/${projectId}/code/branches`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
+  listCommits: (projectId, branch) => {
+    const q = branch ? `?branch=${encodeURIComponent(branch)}` : "";
+    return request(`/api/projects/${projectId}/code/commits${q}`);
+  },
+  createCommit: (projectId, body) =>
+    request(`/api/projects/${projectId}/code/commits`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),
+  getCommit: (projectId, commitId) => request(`/api/projects/${projectId}/code/commits/${commitId}`),
+  codeDiff: (projectId, fromRef, toRef = "working") =>
+    request(`/api/projects/${projectId}/code/diff?from_ref=${encodeURIComponent(fromRef)}&to_ref=${encodeURIComponent(toRef)}`),
+
   listFiles: () => request("/api/files"),
   getFile: (id) => request(`/api/files/${id}`),
   deleteFile: (id) => request(`/api/files/${id}`, { method: "DELETE" }),
