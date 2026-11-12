@@ -1,0 +1,132 @@
+/* Project workspace */
+.project-switcher { position: relative; }
+.project-btn {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 6px 12px; font-weight: 600; color: var(--text); max-width: 220px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.project-menu {
+  position: absolute; top: 100%; left: 0; z-index: 30; margin-top: 4px;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--r);
+  box-shadow: 0 8px 24px rgba(20,24,46,.12); min-width: 240px; padding: 6px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.project-menu button {
+  text-align: left; background: none; border: 0; padding: 8px 10px; border-radius: 6px;
+}
+.project-menu button:hover, .project-menu button.active { background: var(--bg); color: var(--brand); }
+.project-menu hr { border: 0; border-top: 1px solid var(--line); margin: 4px 0; }
+.project-create { display: flex; flex-direction: column; gap: 6px; padding: 6px; }
+.project-create input {
+  font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px;
+}
+.project-create .row { display: flex; gap: 6px; }
+.project-create button {
+  background: var(--brand); color: #fff; border: 0; border-radius: 6px; padding: 6px 12px; font-weight: 600;
+}
+.project-create button[type="button"] { background: var(--bg); color: var(--muted); }
+
+.panel-empty {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  color: var(--muted); padding: 40px; text-align: center;
+}
+
+.docs-panel { flex: 1; display: grid; grid-template-columns: 280px 1fr; min-height: 0; }
+.docs-list { border-right: 1px solid var(--line); background: var(--card); display: flex; flex-direction: column; min-height: 0; }
+.docs-toolbar { display: flex; gap: 6px; padding: 12px; border-bottom: 1px solid var(--line); }
+.docs-toolbar button {
+  flex: 1; background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 6px 10px; font-weight: 600; font-size: 13px;
+}
+.docs-toolbar button:hover { border-color: var(--brand); color: var(--brand); }
+.docs-list ul { list-style: none; margin: 0; padding: 8px; overflow-y: auto; flex: 1; }
+.docs-list li { display: flex; align-items: center; gap: 4px; border-radius: 8px; }
+.docs-list li.active { background: var(--bg); }
+.doc-item {
+  flex: 1; text-align: left; background: none; border: 0; padding: 10px;
+  display: flex; flex-direction: column; gap: 2px; min-width: 0;
+}
+.doc-title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.doc-meta { font-size: 12px; color: var(--muted); }
+.icon-btn { background: none; border: 0; color: var(--muted); padding: 4px 8px; }
+.icon-btn:hover { color: var(--bad); }
+.docs-editor { display: flex; flex-direction: column; min-height: 0; padding: 16px 20px; overflow: auto; }
+.editor-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+.editor-header input { flex: 1; font: inherit; font-size: 18px; font-weight: 700; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+.md-editor, .md-preview {
+  flex: 1; width: 100%; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px; line-height: 1.5; padding: 14px; border: 1px solid var(--line);
+  border-radius: var(--r); background: var(--card); resize: vertical; min-height: 320px;
+  white-space: pre-wrap; overflow: auto;
+}
+.generate-form { display: flex; flex-direction: column; gap: 10px; max-width: 640px; }
+.generate-form input, .generate-form textarea {
+  font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+}
+.generate-form button {
+  align-self: flex-start; background: var(--brand); color: #fff; border: 0;
+  border-radius: 8px; padding: 8px 18px; font-weight: 600;
+}
+.generate-form button:disabled { opacity: .5; }
+
+.code-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.code-toolbar {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--line);
+}
+.code-toolbar label { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
+.code-toolbar select, .commit-msg {
+  font: inherit; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px;
+}
+.commit-msg { flex: 1; min-width: 160px; }
+.upload-btn {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 6px 12px; font-weight: 600; cursor: pointer;
+}
+.code-toolbar > button {
+  background: var(--brand); color: #fff; border: 0; border-radius: 8px;
+  padding: 6px 14px; font-weight: 600;
+}
+.code-body { flex: 1; display: grid; grid-template-columns: 240px 1fr 260px; min-height: 0; }
+.code-tree, .commit-list {
+  border-right: 1px solid var(--line); background: var(--card);
+  overflow-y: auto; padding: 10px;
+}
+.commit-list { border-right: 0; border-left: 1px solid var(--line); }
+.tree-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 13px; }
+.tree-header button {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px;
+}
+.code-tree ul, .commit-list ul { list-style: none; margin: 0; padding: 0; }
+.code-tree li button, .commit-list li button {
+  width: 100%; text-align: left; background: none; border: 0; padding: 6px 8px;
+  border-radius: 6px; font-size: 14px;
+}
+.code-tree li button:hover, .commit-list li button:hover { background: var(--bg); }
+.commit-list li { margin-bottom: 6px; }
+.commit-list code { font-size: 12px; color: var(--brand); margin-right: 6px; }
+.commit-list .muted { display: block; font-size: 12px; padding-left: 8px; }
+.code-viewer { padding: 12px 16px; overflow: auto; }
+.viewer-header { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.code-content {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px;
+  line-height: 1.45; white-space: pre-wrap; margin: 0; background: var(--card);
+  border: 1px solid var(--line); border-radius: 8px; padding: 12px;
+}
+.diff-view ul { list-style: none; padding: 0; }
+.diff-view .status { font-size: 12px; font-weight: 600; margin-right: 8px; text-transform: uppercase; }
+.diff-view .status.added { color: var(--ok); }
+.diff-view .status.deleted { color: var(--bad); }
+.diff-view .status.modified { color: #b45f06; }
+.error {
+  background: #fdeaea; color: #8f2424; padding: 8px 12px; margin: 8px 16px;
+  border-radius: 8px; font-size: 14px;
+}
+.muted { color: var(--muted); }
+.row { display: flex; gap: 8px; align-items: center; }
+
+@media (max-width: 960px) {
+  .docs-panel { grid-template-columns: 1fr; }
+  .code-body { grid-template-columns: 1fr; }
+  .code-tree, .commit-list { max-height: 200px; border-right: 0; border-bottom: 1px solid var(--line); }
+}
